@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,18 +27,15 @@ public class Item {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "quantity")
-    private int quantity;
+    @Column(name = "number_of_available_items")
+    private Integer noOfAvailableItems;
 
-    @ManyToMany
-    private List<Restaurant> restaurantList;
-
-    @ManyToMany(mappedBy = "itemSetRestaurant")
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Restaurant> restaurants = new HashSet<>();
 
-    @ManyToMany(mappedBy = "itemSetOrder", fetch = FetchType.EAGER)
     @JsonIgnore
+    @ManyToMany(mappedBy = "itemSetOrder", fetch = FetchType.LAZY)
     private Set<Order> orders = new HashSet<>();
-
 }
 

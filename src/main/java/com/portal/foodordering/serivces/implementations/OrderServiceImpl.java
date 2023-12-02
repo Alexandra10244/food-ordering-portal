@@ -4,15 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portal.foodordering.models.dtos.OrderDTO;
 import com.portal.foodordering.models.entities.Item;
 import com.portal.foodordering.models.entities.Order;
+import com.portal.foodordering.models.enums.PaymentStatus;
 import com.portal.foodordering.repositories.ItemRepository;
 import com.portal.foodordering.repositories.OrderRepository;
 import com.portal.foodordering.serivces.interfaces.OrderService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +26,21 @@ public class OrderServiceImpl implements OrderService {
     private final ObjectMapper objectMapper;
     private final ItemRepository itemRepository;
 
+    @Transactional
     @Override
     public OrderDTO createOrder(OrderDTO orderDTO) {
-        Order order = orderRepository.save(objectMapper.convertValue(orderDTO, Order.class));
+        Order order = objectMapper.convertValue(orderDTO, Order.class);
 
-        return objectMapper.convertValue(order, OrderDTO.class);
+        if (order.getNoOfItems() > order.getNoOfItems()) {
+            throw new RuntimeException("Insufficient stock for one or more items in the order.");
+        }
+        double totalAmount = calculateTotalAmount(order.getItemSetOrder(), order.getNoOfItems());
+
+        Order savedOrder = orderRepository.save(order);
+
+        updateStock(order.getItemSetOrder(), order.getNoOfItems());
+
+        return objectMapper.convertValue(savedOrder, OrderDTO.class);
     }
 
     @Override
@@ -91,5 +105,40 @@ public class OrderServiceImpl implements OrderService {
         } else {
             throw new IllegalStateException("Invalid operation: Item with id " + itemId + " cannot be removed from Order " + orderId);
         }
+    }
+
+    private boolean checkAvailability(Set<Item> items) {
+        for (Item item : items) {
+            if (item.getNoOfAvailableItems() < 1) {
+                throw new RuntimeException("Sorry, the product is no longer available at the moment");
+            }
+        }
+        return true;
+    }
+
+    private double calculateTotalAmount(Set<Item> items, Integer noOfItems) {
+        double totalAmount = 0.0;
+        for (Item item : items) {
+            totalAmount += (item.getPrice() * noOfItems);
+        }
+        return totalAmount;
+    }
+
+    private void updateStock(Set<Item> items, int orderedQuantity) {
+        for (Item item : items) {
+            int remainingStock = item.getNoOfAvailableItems() - orderedQuantity;
+            item.setNoOfAvailableItems(remainingStock);
+
+            itemRepository.save(item);
+        }
+    }
+
+    @Override
+    public void processPaymentConfirmation(Long id) {
+       Order order = orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Order not found"));
+
+       order.setPaymentStatus(PaymentStatus.SUCCESSFUL);
+
+       orderRepository.save(order);
     }
 }

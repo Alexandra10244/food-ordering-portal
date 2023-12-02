@@ -1,8 +1,11 @@
 package com.portal.foodordering.models.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 public class ItemDTO {
@@ -17,9 +20,7 @@ public class ItemDTO {
     @NotBlank(message = "This field must not be empty!")
     private String description;
 
-    @NotBlank(message = "This field must not be empty!")
-    @Size(min = 1, message = "Invalid quantity")
-    private int quantity;
-
+    @NotNull(message = "This field must not be empty!")
+    private Integer noOfAvailableItems;
 }
 

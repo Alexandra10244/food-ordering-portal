@@ -36,11 +36,15 @@ public class Order {
     @Column(name = "total_amount")
     private double totalAmount;
 
+    @Column(name = "number_of_items")
+    private int noOfItems;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
 
-    @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "order_item",
             joinColumns = @JoinColumn(name = "order_id"),

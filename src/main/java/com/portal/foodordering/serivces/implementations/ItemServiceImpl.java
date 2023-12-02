@@ -5,10 +5,12 @@ import com.portal.foodordering.models.dtos.ItemDTO;
 import com.portal.foodordering.models.entities.Item;
 import com.portal.foodordering.repositories.ItemRepository;
 import com.portal.foodordering.serivces.interfaces.ItemService;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -38,14 +40,14 @@ public class ItemServiceImpl implements ItemService {
         if (itemDTO.getName() != null && !itemDTO.getName().isEmpty()) {
             item.setName(itemDTO.getName());
         }
-        if (itemDTO.getPrice() > 0.0) {
+        if (itemDTO.getPrice() > 0) {
             item.setPrice(itemDTO.getPrice());
         }
-        if (itemDTO.getQuantity() > 0) {
+        if (itemDTO.getDescription() != null) {
             item.setDescription(itemDTO.getDescription());
         }
-        if (itemDTO.getQuantity() != 0.0) {
-            item.setQuantity(itemDTO.getQuantity());
+        if (itemDTO.getNoOfAvailableItems() != null) {
+            item.setNoOfAvailableItems(itemDTO.getNoOfAvailableItems());
         }
 
         Item updatedItem = itemRepository.save(item);

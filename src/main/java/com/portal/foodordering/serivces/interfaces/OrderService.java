@@ -13,4 +13,5 @@ public interface OrderService {
     List<OrderDTO> findOrderByUserId(Long userId);
     OrderDTO addItemToOrder(Long orderId,Long itemId);
     OrderDTO removeItemFromOrder(Long orderId, Long itemId);
+    void processPaymentConfirmation(Long id);
 }

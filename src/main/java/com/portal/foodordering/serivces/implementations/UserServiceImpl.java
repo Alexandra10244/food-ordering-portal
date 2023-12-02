@@ -48,6 +48,9 @@ public class UserServiceImpl implements UserService {
         if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
             user.setEmail(userDTO.getEmail());
         }
+        if (userDTO.getAddress() != null && !userDTO.getAddress().isEmpty()) {
+            user.setAddress(userDTO.getAddress());
+        }
 
         User userUpdated = userRepository.save(user);
 
