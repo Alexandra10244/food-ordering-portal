@@ -22,16 +22,9 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
-
     @Column(name = "order_created_at")
     @CreationTimestamp
     private LocalDateTime orderCreatedAt;
-
-    @Column(name = "order_delivered_at")
-    private LocalDateTime orderDeliveredAt;
 
     @Column(name = "total_amount")
     private double totalAmount;
@@ -43,13 +36,7 @@ public class Order {
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
 
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "order_item",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id")
-    )
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "orderedItem")
     private Set<Item> itemSetOrder = new HashSet<>();
 }
 

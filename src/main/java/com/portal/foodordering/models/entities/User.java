@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
-    @Data
+@Data
     @Entity
     @Table(name = "users")
     public class User {
@@ -30,7 +31,7 @@ import java.util.List;
         private String address;
 
         @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-        private List<Order> orders;
+        private Set<Order> orders;
 
 }
 

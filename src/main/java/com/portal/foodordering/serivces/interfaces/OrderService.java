@@ -6,12 +6,12 @@ import java.util.List;
 
 public interface OrderService {
 
-    OrderDTO createOrder(OrderDTO orderDTO);
+    OrderDTO createOrder(OrderDTO orderDTO, Long itemId, int itemQuantity);
     List<OrderDTO> getAllOrders();
     String deleteOrder(Long id);
     OrderDTO findById(Long id);
     List<OrderDTO> findOrderByUserId(Long userId);
     OrderDTO addItemToOrder(Long orderId,Long itemId);
     OrderDTO removeItemFromOrder(Long orderId, Long itemId);
-    void processPaymentConfirmation(Long id);
+    String processPaymentConfirmation(Long id, String status);
 }

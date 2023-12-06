@@ -15,11 +15,13 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    private OrderService orderService;
+    private final OrderService orderService;
 
-    @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@Validated @RequestBody OrderDTO orderDTO) {
-        return ResponseEntity.ok(orderService.createOrder(orderDTO));
+    @PostMapping("/{itemId}/{quantity}")
+    public ResponseEntity<OrderDTO> createOrder(@Validated @RequestBody OrderDTO orderDTO,
+                                                @PathVariable Long itemId,
+                                                @PathVariable int quantity) {
+        return ResponseEntity.ok(orderService.createOrder(orderDTO, itemId, quantity));
     }
 
     @GetMapping
@@ -43,13 +45,21 @@ public class OrderController {
     }
 
     @PatchMapping
-    public ResponseEntity<OrderDTO> addItemsToOrder(@PathVariable Long orderId, @PathVariable Long itemId) {
+    public ResponseEntity<OrderDTO> addItemsToOrder(@PathVariable Long orderId,
+                                                    @PathVariable Long itemId) {
         return ResponseEntity.ok(orderService.addItemToOrder(orderId, itemId));
     }
 
     @DeleteMapping("/{order_id}/{item_id}")
-    public ResponseEntity<OrderDTO> removeItemFromOrder(@PathVariable Long orderId, @PathVariable Long itemId) {
+    public ResponseEntity<OrderDTO> removeItemFromOrder(@PathVariable Long orderId,
+                                                        @PathVariable Long itemId) {
         return ResponseEntity.ok(orderService.removeItemFromOrder(orderId, itemId));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> processPayment(@PathVariable Long id,
+                                                 @RequestParam String option) {
+        return ResponseEntity.ok(orderService.processPaymentConfirmation(id, option));
     }
 }
 

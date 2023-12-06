@@ -1,5 +1,6 @@
 package com.portal.foodordering.models.dtos;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -14,7 +15,7 @@ public class ItemDTO {
     @NotBlank(message = "This field must not be empty!")
     private String name;
 
-    @NotBlank(message = "This field must not be empty!")
+    @Min(0)
     private double price;
 
     @NotBlank(message = "This field must not be empty!")

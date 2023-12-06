@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/items")
 public class ItemController {
 
-    private ItemService itemService;
+    private final ItemService itemService;
 
     @PostMapping
     public ResponseEntity<ItemDTO> createItem(@Valid @RequestBody ItemDTO itemDTO) {

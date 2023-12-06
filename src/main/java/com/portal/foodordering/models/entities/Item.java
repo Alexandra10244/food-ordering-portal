@@ -31,11 +31,11 @@ public class Item {
     private Integer noOfAvailableItems;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemSetRestaurant")
     private Set<Restaurant> restaurants = new HashSet<>();
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "itemSetOrder", fetch = FetchType.LAZY)
-    private Set<Order> orders = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ordered_item")
+    private Order orderedItem;
 }
 

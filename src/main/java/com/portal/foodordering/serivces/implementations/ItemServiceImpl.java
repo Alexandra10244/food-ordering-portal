@@ -1,16 +1,14 @@
 package com.portal.foodordering.serivces.implementations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portal.foodordering.exceptions.ItemNotFoundException;
 import com.portal.foodordering.models.dtos.ItemDTO;
 import com.portal.foodordering.models.entities.Item;
 import com.portal.foodordering.repositories.ItemRepository;
 import com.portal.foodordering.serivces.interfaces.ItemService;
-import io.micrometer.common.util.StringUtils;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -35,7 +33,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDTO updateItem(Long id, ItemDTO itemDTO) {
-        Item item = itemRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Item not found!"));
+        Item item = itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
 
         if (itemDTO.getName() != null && !itemDTO.getName().isEmpty()) {
             item.setName(itemDTO.getName());
@@ -62,21 +60,21 @@ public class ItemServiceImpl implements ItemService {
 
             return "Product with id " + id + " successfully deleted!";
         } else {
-            throw new EntityNotFoundException("Item not found!");
+            throw new ItemNotFoundException("Item not found!");
         }
 
     }
 
     @Override
     public ItemDTO findItemById(Long id) {
-        Item item = itemRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Item not found"));
+        Item item = itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
 
         return objectMapper.convertValue(item, ItemDTO.class);
     }
 
     @Override
     public ItemDTO findItemByName(String name) {
-        Item item = itemRepository.findItemByName(name).orElseThrow(() -> new EntityNotFoundException("Item not found"));
+        Item item = itemRepository.findItemByName(name).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
 
         return objectMapper.convertValue(item, ItemDTO.class);
     }

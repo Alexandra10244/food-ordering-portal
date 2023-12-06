@@ -1,11 +1,11 @@
 package com.portal.foodordering.serivces.implementations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portal.foodordering.exceptions.UserNotFoundExceptionException;
 import com.portal.foodordering.models.dtos.UserDTO;
 import com.portal.foodordering.models.entities.User;
 import com.portal.foodordering.repositories.UserRepository;
 import com.portal.foodordering.serivces.interfaces.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO updateUser(Long id, UserDTO userDTO) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExceptionException("User not found!"));
 
         if (userDTO.getFirstName() != null && !userDTO.getFirstName().isEmpty()) {
             user.setFirstName(userDTO.getFirstName());
@@ -64,21 +64,21 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteById(id);
             return "User " + id + " successfully deleted!";
         } else {
-            throw new EntityNotFoundException("User not found");
+            throw new UserNotFoundExceptionException("User not found");
         }
 
     }
 
     @Override
     public UserDTO findUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExceptionException("User not found!"));
 
         return objectMapper.convertValue(user, UserDTO.class);
     }
 
     @Override
     public UserDTO findUserByEmail(String email) {
-        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundExceptionException("User not found!"));
 
         return objectMapper.convertValue(user, UserDTO.class);
     }

@@ -1,11 +1,11 @@
 package com.portal.foodordering.serivces.implementations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portal.foodordering.exceptions.RestaurantNotFoundException;
 import com.portal.foodordering.models.dtos.RestaurantDTO;
 import com.portal.foodordering.models.entities.Restaurant;
 import com.portal.foodordering.repositories.RestaurantRepository;
 import com.portal.foodordering.serivces.interfaces.RestaurantService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public RestaurantDTO updateRestaurant(Long id, RestaurantDTO restaurantDTO) {
-        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Restaurant not found!"));
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found!"));
 
         if (restaurantDTO.getName() != null) {
             restaurant.setName(restaurantDTO.getName());
@@ -56,7 +56,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
             return "Restaurant successfully deleted!";
         } else {
-            throw new EntityNotFoundException("Restaurant not found");
+            throw new RestaurantNotFoundException("Restaurant not found!");
         }
     }
 
@@ -64,7 +64,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public RestaurantDTO findRestaurantById(Long id) {
         Restaurant restaurant = restaurantRepository
                 .findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Restaurant with id " + id + " not fount"));
+                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant with id " + id + " not fount!"));
 
         return objectMapper.convertValue(restaurant, RestaurantDTO.class);
     }
@@ -73,7 +73,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public RestaurantDTO findRestaurantByName(String name) {
         Restaurant restaurant = restaurantRepository
                 .findByName(name)
-                .orElseThrow(() -> new EntityNotFoundException("Restaurant with name " + name + " not fount"));
+                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant with name " + name + " not fount!"));
 
         return objectMapper.convertValue(restaurant, RestaurantDTO.class);
     }
@@ -82,7 +82,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public RestaurantDTO findRestaurantByCuisine(String cuisine) {
         Restaurant restaurant = restaurantRepository
                 .findByCuisine(cuisine)
-                .orElseThrow(() -> new EntityNotFoundException("Restaurant with cuisine " + cuisine + " not fount"));
+                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant with cuisine " + cuisine + " not fount!"));
 
         return objectMapper.convertValue(restaurant, RestaurantDTO.class);
     }
