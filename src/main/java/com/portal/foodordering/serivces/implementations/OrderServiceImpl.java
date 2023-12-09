@@ -31,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public OrderDTO createOrder(OrderDTO orderDTO, Long itemId, int itemQuantity) {
-        User user = userRepository.findById(orderDTO.getUserID()).orElseThrow(() -> new UserNotFoundExceptionException("User not found!"));
+        User user = userRepository.findById(orderDTO.getUserID()).orElseThrow(() -> new UserNotFoundException("User not found!"));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         Order order = new Order();
 
@@ -153,7 +153,7 @@ public class OrderServiceImpl implements OrderService {
         } else if (status.equalsIgnoreCase("FAILED")) {
             order.setPaymentStatus(PaymentStatus.FAILED);
         } else {
-            throw new PaymentStatusExceptionException("Invalid payment status!");
+            throw new PaymentStatusException("Invalid payment status!");
         }
 
         orderRepository.save(order);

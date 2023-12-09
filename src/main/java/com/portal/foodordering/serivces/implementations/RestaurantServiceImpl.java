@@ -6,6 +6,8 @@ import com.portal.foodordering.models.dtos.RestaurantDTO;
 import com.portal.foodordering.models.entities.Restaurant;
 import com.portal.foodordering.repositories.RestaurantRepository;
 import com.portal.foodordering.serivces.interfaces.RestaurantService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurants.stream()
                 .map(user -> objectMapper.convertValue(user, RestaurantDTO.class))
                 .toList();
+
     }
 
     @Override

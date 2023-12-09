@@ -37,18 +37,18 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.deleteRestaurant(id));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RestaurantDTO> findRestaurantById(@PathVariable Long id) {
+    @GetMapping("/restaurant_by_id")
+    public ResponseEntity<RestaurantDTO> findRestaurantById(@RequestParam Long id) {
         return ResponseEntity.ok(restaurantService.findRestaurantById(id));
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<RestaurantDTO> findRestaurantByName(@PathVariable String name) {
+    @GetMapping("/restaurant_by_name")
+    public ResponseEntity<RestaurantDTO> findRestaurantByName(@RequestParam String name) {
         return ResponseEntity.ok(restaurantService.findRestaurantByName(name));
     }
 
-    @GetMapping("/{cuisine}")
-    public ResponseEntity<RestaurantDTO> findRestaurantByCuisine(@PathVariable String cuisine) {
-        return ResponseEntity.ok(restaurantService.findRestaurantByName(cuisine));
+    @GetMapping("/restaurant_by_cuisine")
+    public ResponseEntity<RestaurantDTO> findRestaurantByCuisine(@RequestParam String cuisine) {
+        return ResponseEntity.ok(restaurantService.findRestaurantByCuisine(cuisine));
     }
 }

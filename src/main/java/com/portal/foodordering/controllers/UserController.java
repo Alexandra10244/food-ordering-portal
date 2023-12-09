@@ -37,13 +37,13 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, userDTO));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> findUserById(@PathVariable Long id) {
+    @GetMapping("/id")
+    public ResponseEntity<UserDTO> findUserById(@RequestParam Long id) {
         return ResponseEntity.ok(userService.findUserById(id));
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<UserDTO> findUserByMail(@PathVariable String email) {
+    @GetMapping("/email")
+    public ResponseEntity<UserDTO> findUserByMail(@RequestParam String email) {
         return ResponseEntity.ok(userService.findUserByEmail(email));
     }
 }

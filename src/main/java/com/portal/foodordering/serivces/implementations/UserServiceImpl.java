@@ -1,7 +1,9 @@
 package com.portal.foodordering.serivces.implementations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.portal.foodordering.exceptions.UserNotFoundExceptionException;
+import com.portal.foodordering.exceptions.InvalidEmailFormatException;
+import com.portal.foodordering.exceptions.InvalidPhoneNumberException;
+import com.portal.foodordering.exceptions.UserNotFoundException;
 import com.portal.foodordering.models.dtos.UserDTO;
 import com.portal.foodordering.models.entities.User;
 import com.portal.foodordering.repositories.UserRepository;
@@ -20,6 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
+        validatedUserDTO(userDTO);
         User user = userRepository.save(objectMapper.convertValue(userDTO, User.class));
         return objectMapper.convertValue(user, UserDTO.class);
     }
@@ -34,7 +37,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO updateUser(Long id, UserDTO userDTO) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExceptionException("User not found!"));
+        validatedUserDTO(userDTO);
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         if (userDTO.getFirstName() != null && !userDTO.getFirstName().isEmpty()) {
             user.setFirstName(userDTO.getFirstName());
@@ -64,23 +68,39 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteById(id);
             return "User " + id + " successfully deleted!";
         } else {
-            throw new UserNotFoundExceptionException("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
     }
 
     @Override
     public UserDTO findUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExceptionException("User not found!"));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         return objectMapper.convertValue(user, UserDTO.class);
     }
 
     @Override
     public UserDTO findUserByEmail(String email) {
-        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundExceptionException("User not found!"));
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         return objectMapper.convertValue(user, UserDTO.class);
+    }
+
+    private void validatedUserDTO(UserDTO userDTO) {
+        String email = userDTO.getEmail();
+        String phoneNumber = userDTO.getPhoneNumber();
+
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new InvalidEmailFormatException("Invalid email.");
+        }
+
+        if (!phoneNumber.matches("^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$"
+                + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?){2}\\d{3}$"
+                + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?)(\\d{2}[ ]?){2}\\d{2}$")) {
+            throw new InvalidPhoneNumberException("Invalid phone number.");
+
+        }
     }
 }
 

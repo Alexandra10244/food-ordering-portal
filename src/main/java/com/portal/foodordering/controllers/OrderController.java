@@ -34,13 +34,13 @@ public class OrderController {
         return ResponseEntity.ok(orderService.deleteOrder(id));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> findOrderById(@PathVariable Long id) {
+    @GetMapping("/order_by_id")
+    public ResponseEntity<OrderDTO> findOrderById(@RequestParam Long id) {
         return ResponseEntity.ok(orderService.findById(id));
     }
 
-    @GetMapping("/{user_id}")
-    public ResponseEntity<OrderDTO> findOrderByUser(@PathVariable Long userId) {
+    @GetMapping("/order_by_user")
+    public ResponseEntity<OrderDTO> findOrderByUser(@RequestParam Long userId) {
         return ResponseEntity.ok(orderService.findById(userId));
     }
 

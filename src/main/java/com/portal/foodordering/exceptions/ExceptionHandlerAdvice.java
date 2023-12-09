@@ -29,9 +29,9 @@ import static org.springframework.http.HttpStatus.*;
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     private final ObjectMapper objectMapper;
 
-    @ExceptionHandler(UserNotFoundExceptionException.class)
-    public ResponseEntity<String> userNotFoundException(UserNotFoundExceptionException userNotFoundExceptionException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", userNotFoundExceptionException.getMessage())), NOT_FOUND);
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> userNotFoundException(UserNotFoundException userNotFoundException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", userNotFoundException.getMessage())), NOT_FOUND);
     }
 
     @ExceptionHandler(RestaurantNotFoundException.class)
@@ -64,9 +64,19 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(objectToString(Map.of("message", productNotAvailableException.getMessage())), BAD_REQUEST);
     }
 
-    @ExceptionHandler(PaymentStatusExceptionException.class)
-    public ResponseEntity<String> paymentStatusException(PaymentStatusExceptionException paymentStatusExceptionException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", paymentStatusExceptionException.getMessage())), BAD_REQUEST);
+    @ExceptionHandler(PaymentStatusException.class)
+    public ResponseEntity<String> paymentStatusException(PaymentStatusException paymentStatusException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", paymentStatusException.getMessage())), BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidEmailFormatException.class)
+    public ResponseEntity<String> invalidEmailFormatException(InvalidEmailFormatException invalidEmailFormatException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", invalidEmailFormatException.getMessage())), CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidPhoneNumberException.class)
+    public ResponseEntity<String> invalidPhoneNumberException(InvalidPhoneNumberException invalidPhoneNumberException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", invalidPhoneNumberException.getMessage())), CONFLICT);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -90,7 +100,6 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         });
         return new ResponseEntity<>(objectToString(errors), HttpStatus.BAD_REQUEST);
     }
-
 
     private String objectToString(Object response) {
         try {

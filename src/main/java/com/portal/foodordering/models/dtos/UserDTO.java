@@ -20,7 +20,7 @@ public class UserDTO {
     @NotBlank(message = "This field must not be empty!")
     private String phoneNumber;
 
-    @Email(message = "Invalid email address!")
+    @NotBlank(message = "This field must not be empty!")
     private String email;
 
     @NotBlank(message = "This field must not be empty!")

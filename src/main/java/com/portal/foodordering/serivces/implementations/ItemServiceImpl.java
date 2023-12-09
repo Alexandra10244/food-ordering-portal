@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemRepository.existsById(id)) {
             itemRepository.deleteById(id);
 
-            return "Product with id " + id + " successfully deleted!";
+            return "Product " + id + " successfully deleted!";
         } else {
             throw new ItemNotFoundException("Item not found!");
         }

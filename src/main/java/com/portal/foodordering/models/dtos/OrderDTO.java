@@ -13,10 +13,8 @@ import java.util.Set;
 @Data
 public class OrderDTO {
     private Long id;
-    private Long restaurantId;
     private Long userID;
     private LocalDateTime orderCreatedAt;
-    @Min(1)
     private int noOfItems;
     private double totalAmount;
     private PaymentStatus paymentStatus;

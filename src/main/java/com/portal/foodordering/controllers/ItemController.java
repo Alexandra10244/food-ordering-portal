@@ -29,7 +29,7 @@ public class ItemController {
         return ResponseEntity.ok(itemService.getAllItems());
     }
 
-    @PatchMapping
+    @PatchMapping("/{id}")
     public ResponseEntity<ItemDTO> updateItem(@PathVariable Long id, @RequestBody ItemDTO itemDTO) {
         return ResponseEntity.ok(itemService.updateItem(id, itemDTO));
     }
@@ -39,13 +39,13 @@ public class ItemController {
         return ResponseEntity.ok(itemService.deleteItem(id));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ItemDTO> findItemById(@PathVariable Long id) {
+    @GetMapping("/id")
+    public ResponseEntity<ItemDTO> findItemById(@RequestParam Long id) {
         return ResponseEntity.ok(itemService.findItemById(id));
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<ItemDTO> findItemByName(@PathVariable String name) {
+    @GetMapping("/name")
+    public ResponseEntity<ItemDTO> findItemByName(@RequestParam String name) {
         return ResponseEntity.ok(itemService.findItemByName(name));
     }
 
