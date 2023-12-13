@@ -32,9 +32,8 @@ public class Item {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemSetRestaurant")
     private Set<Restaurant> restaurants = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ordered_item")
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "items")
     @JsonIgnore
-    private Order order;
+    private Set<Order> orders;
 }
 

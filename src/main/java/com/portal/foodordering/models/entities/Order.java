@@ -37,8 +37,13 @@ public class Order {
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "order_items",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
     @JsonIgnore
-    private Set<Item> itemSetOrder = new HashSet<>();
+    private Set<Item> items = new HashSet<>();
 }
 

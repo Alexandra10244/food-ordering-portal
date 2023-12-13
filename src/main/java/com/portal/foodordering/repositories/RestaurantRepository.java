@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,5 +15,5 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     Optional<Restaurant> findByNameIgnoreCase(@Param("name") String name);
 
     @Query("SELECT restaurant FROM Restaurant restaurant WHERE LOWER(restaurant.cuisine) = LOWER(:cuisine)")
-    Optional<Restaurant> findByCuisineIgnoreCase(@Param("cuisine") String cuisine);
+    List<Restaurant> findByCuisineIgnoreCase(@Param("cuisine") String cuisine);
 }

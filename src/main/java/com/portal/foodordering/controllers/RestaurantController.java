@@ -22,6 +22,12 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.createRestaurant(restaurantDTO));
     }
 
+    @PatchMapping("/item")
+    public ResponseEntity<String> addItemToRestaurant(@RequestParam Long itemId,
+                                                      @RequestParam Long restaurantId){
+        return ResponseEntity.ok(restaurantService.addIemToRestaurant(itemId,restaurantId));
+    }
+
     @GetMapping
     public ResponseEntity<List<RestaurantDTO>> getAllRestaurant() {
         return ResponseEntity.ok(restaurantService.getAllRestaurants());
@@ -48,7 +54,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/restaurant_by_cuisine")
-    public ResponseEntity<RestaurantDTO> findRestaurantByCuisine(@RequestParam String cuisine) {
+    public ResponseEntity<List<RestaurantDTO>> findRestaurantByCuisine(@RequestParam String cuisine) {
         return ResponseEntity.ok(restaurantService.findRestaurantByCuisine(cuisine));
     }
 }

@@ -11,7 +11,7 @@ public interface OrderService {
     String deleteOrder(Long id);
     OrderDTO findById(Long id);
     List<OrderDTO> findOrderByUserId(Long userId);
-    OrderDTO addItemToOrder(Long orderId,Long itemId);
-    OrderDTO removeItemFromOrder(Long orderId, Long itemId);
+    OrderDTO addItemToOrder(Long orderId,Long itemId, int quantity);
+    OrderDTO removeItemFromOrder(Long orderId, Long itemId, int quantity);
     String processPaymentConfirmation(Long id, String status);
 }
