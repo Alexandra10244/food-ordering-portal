@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portal.foodordering.exceptions.InvalidEmailFormatException;
 import com.portal.foodordering.exceptions.InvalidPhoneNumberException;
 import com.portal.foodordering.exceptions.UserNotFoundException;
+import com.portal.foodordering.models.dtos.EditUserDTO;
 import com.portal.foodordering.models.dtos.UserDTO;
 import com.portal.foodordering.models.entities.User;
 import com.portal.foodordering.repositories.UserRepository;
 import com.portal.foodordering.serivces.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,8 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(Long id, UserDTO userDTO) {
-        validatedUserDTO(userDTO);
+    public UserDTO updateUser(Long id, EditUserDTO userDTO) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         if (userDTO.getFirstName() != null && !userDTO.getFirstName().isEmpty()) {
@@ -91,15 +92,14 @@ public class UserServiceImpl implements UserService {
         String email = userDTO.getEmail();
         String phoneNumber = userDTO.getPhoneNumber();
 
-        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             throw new InvalidEmailFormatException("Invalid email.");
         }
 
-        if (!phoneNumber.matches("^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$"
+        if (phoneNumber == null || !phoneNumber.matches("^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$"
                 + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?){2}\\d{3}$"
                 + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?)(\\d{2}[ ]?){2}\\d{2}$")) {
             throw new InvalidPhoneNumberException("Invalid phone number.");
-
         }
     }
 }

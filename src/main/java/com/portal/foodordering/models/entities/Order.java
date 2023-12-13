@@ -20,6 +20,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @Column(name = "order_created_at")
@@ -36,7 +37,8 @@ public class Order {
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "orderedItem")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @JsonIgnore
     private Set<Item> itemSetOrder = new HashSet<>();
 }
 

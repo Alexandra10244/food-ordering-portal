@@ -75,7 +75,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public RestaurantDTO findRestaurantByName(String name) {
         Restaurant restaurant = restaurantRepository
-                .findByName(name)
+                .findByNameIgnoreCase(name)
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant with name " + name + " not fount!"));
 
         return objectMapper.convertValue(restaurant, RestaurantDTO.class);
@@ -84,7 +84,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public RestaurantDTO findRestaurantByCuisine(String cuisine) {
         Restaurant restaurant = restaurantRepository
-                .findByCuisine(cuisine)
+                .findByCuisineIgnoreCase(cuisine)
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant with cuisine " + cuisine + " not fount!"));
 
         return objectMapper.convertValue(restaurant, RestaurantDTO.class);

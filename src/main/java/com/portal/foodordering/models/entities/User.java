@@ -30,7 +30,7 @@ import java.util.Set;
         @Column(name = "address")
         private String address;
 
-        @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+        @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
         private Set<Order> orders;
 
 }

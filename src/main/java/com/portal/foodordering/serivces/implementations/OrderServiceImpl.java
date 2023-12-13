@@ -13,12 +13,14 @@ import com.portal.foodordering.repositories.UserRepository;
 import com.portal.foodordering.serivces.interfaces.OrderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -30,8 +32,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public OrderDTO createOrder(OrderDTO orderDTO, Long itemId, int itemQuantity) {
-        User user = userRepository.findById(orderDTO.getUserID()).orElseThrow(() -> new UserNotFoundException("User not found!"));
+    public OrderDTO createOrder(Long userId, Long itemId, int itemQuantity) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         Order order = new Order();
 
@@ -44,16 +46,19 @@ public class OrderServiceImpl implements OrderService {
         order.setNoOfItems(order.getNoOfItems() + itemQuantity);
         order.setTotalAmount(totalAmount);
         order.getItemSetOrder().add(item);
+        order.setPaymentStatus(PaymentStatus.UNPAID);
 
         Order savedOrder = orderRepository.save(order);
 
         updateStock(order.getItemSetOrder(), itemQuantity);
 
         OrderDTO responseOrderDTO = new OrderDTO();
-        responseOrderDTO.setId(order.getId());
-        responseOrderDTO.setOrderCreatedAt(order.getOrderCreatedAt());
+        responseOrderDTO.setId(savedOrder.getId());
+        responseOrderDTO.setOrderCreatedAt(savedOrder.getOrderCreatedAt());
         responseOrderDTO.setUserID(user.getId());
-        responseOrderDTO.setNoOfItems(order.getNoOfItems());
+        responseOrderDTO.setNoOfItems(savedOrder.getNoOfItems());
+        responseOrderDTO.setTotalAmount(totalAmount);
+        responseOrderDTO.setPaymentStatus(savedOrder.getPaymentStatus());
 
         return responseOrderDTO;
     }
@@ -61,10 +66,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDTO> getAllOrders() {
         List<Order> orders = orderRepository.findAll();
+        List<OrderDTO> orderDTOS = new ArrayList<>();
+        for (Order order : orders) {
+            orderDTOS.add(new OrderDTO(order.getId(), order.getUser().getId(), order.getOrderCreatedAt(), order.getTotalAmount(),
+                    order.getNoOfItems(), order.getPaymentStatus()));
+        }
 
-        return orders
-                .stream()
-                .map(order -> objectMapper.convertValue(order, OrderDTO.class)).toList();
+        return orderDTOS;
     }
 
     @Override
@@ -90,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = orderRepository.findOrdersByUserId(userId);
         List<OrderDTO> ordersDTO = new ArrayList<>();
         for (Order element : orders) {
-            ordersDTO.add(objectMapper.convertValue(element, OrderDTO.class));
+            ordersDTO.add(new OrderDTO(element.getId(), element.getUser().getId(),element.getOrderCreatedAt(),element.getTotalAmount(),element.getNoOfItems(),element.getPaymentStatus()));
         }
         return ordersDTO;
     }
@@ -99,13 +107,27 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO addItemToOrder(Long orderId, Long itemId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId + "."));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item not found with id: " + itemId + "."));
+        Item itemForOrder = new Item();
+        if (item.getNoOfAvailableItems() > 0) {
+            //order.getItemSetOrder().add(item);
+            itemForOrder = item;
 
-        if (checkAvailability(Set.of(item))) {
-            order.getItemSetOrder().add(item);
+            itemForOrder.setOrder(order);
+        } else {
+            throw new ProductNotAvailableException("Sorry, the product is no longer available at the moment");
         }
-        Order orderUpdated = orderRepository.save(order);
+        //Order updatedOrder = orderRepository.save(order);
+        itemRepository.save(itemForOrder);
 
-        return objectMapper.convertValue(orderUpdated, OrderDTO.class);
+        Order updatedOrder = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId + "."));
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setId(updatedOrder.getId());
+        orderDTO.setUserID(updatedOrder.getUser().getId());
+        orderDTO.setOrderCreatedAt(updatedOrder.getOrderCreatedAt());
+        orderDTO.setPaymentStatus(updatedOrder.getPaymentStatus());
+        orderDTO.setNoOfItems(updatedOrder.getNoOfItems());
+        orderDTO.setTotalAmount(updatedOrder.getTotalAmount());
+        return orderDTO;
     }
 
     @Override
@@ -124,14 +146,15 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private boolean checkAvailability(Set<Item> items) {
-        for (Item item : items) {
-            if (item.getNoOfAvailableItems() < 1) {
-                throw new ProductNotAvailableException("Sorry, the product is no longer available at the moment");
-            }
-        }
-        return true;
-    }
+//    private boolean checkAvailability(Set<Item> items) {
+//        for (Item item : items) {
+//            if (item.getNoOfAvailableItems() < 1) {
+//                throw new ProductNotAvailableException("Sorry, the product is no longer available at the moment");
+//            }
+//        }
+//        return true;
+//    }
+
 
     private void updateStock(Set<Item> items, int orderedQuantity) {
         for (Item item : items) {
@@ -146,10 +169,10 @@ public class OrderServiceImpl implements OrderService {
     public String processPaymentConfirmation(Long id, String status) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException("Order not found!"));
 
-        if (status.equalsIgnoreCase("SUCCESSFUL")) {
-            order.setPaymentStatus(PaymentStatus.SUCCESSFUL);
-        } else if (status.equalsIgnoreCase("REIMBURSED")) {
-            order.setPaymentStatus(PaymentStatus.REIMBURSED);
+        if (status.equalsIgnoreCase("PAID")) {
+            order.setPaymentStatus(PaymentStatus.PAID);
+        } else if (status.equalsIgnoreCase("UNPAID")) {
+            order.setPaymentStatus(PaymentStatus.UNPAID);
         } else if (status.equalsIgnoreCase("FAILED")) {
             order.setPaymentStatus(PaymentStatus.FAILED);
         } else {

@@ -140,7 +140,7 @@ import static org.mockito.Mockito.when;
         Item item = createItemEntity("Pizza Margherita", 23, "Pizza with something", 10);
         ItemDTO itemDTO = createItemDTO("Pizza Margherita", 23, "Pizza with something", 10);
 
-        when(itemRepository.findItemByName(name)).thenReturn(Optional.of(item));
+        when(itemRepository.findItemByNameIgnoreCase(name)).thenReturn(Optional.of(item));
         when(objectMapper.convertValue(item, ItemDTO.class)).thenReturn(itemDTO);
 
         ItemDTO result = itemService.findItemByName(name);
@@ -151,7 +151,7 @@ import static org.mockito.Mockito.when;
     void findItemByNameNotFound() {
         String name = "Pizza Margherita";
 
-        when(itemRepository.findItemByName(name)).thenReturn(Optional.empty());
+        when(itemRepository.findItemByNameIgnoreCase(name)).thenReturn(Optional.empty());
 
         assertThrows(ItemNotFoundException.class, () -> {
             itemService.findItemByName(name);

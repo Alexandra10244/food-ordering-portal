@@ -2,6 +2,7 @@ package com.portal.foodordering.serivces.implementations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portal.foodordering.exceptions.ItemNotFoundException;
+import com.portal.foodordering.models.dtos.EditItem;
 import com.portal.foodordering.models.dtos.ItemDTO;
 import com.portal.foodordering.models.entities.Item;
 import com.portal.foodordering.repositories.ItemRepository;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,24 +30,25 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDTO> getAllItems() {
         List<Item> items = itemRepository.findAll();
         return items.stream()
-                .map(item -> objectMapper.convertValue(item, ItemDTO.class)).toList();
+                .map(item -> objectMapper.convertValue(item, ItemDTO.class))
+                .toList();
     }
 
     @Override
-    public ItemDTO updateItem(Long id, ItemDTO itemDTO) {
+    public ItemDTO updateItem(Long id, EditItem editItem) {
         Item item = itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
 
-        if (itemDTO.getName() != null && !itemDTO.getName().isEmpty()) {
-            item.setName(itemDTO.getName());
+        if (editItem.getName() != null && !editItem.getName().isEmpty()) {
+            item.setName(editItem.getName());
         }
-        if (itemDTO.getPrice() > 0) {
-            item.setPrice(itemDTO.getPrice());
+        if (editItem.getPrice() > 0) {
+            item.setPrice(editItem.getPrice());
         }
-        if (itemDTO.getDescription() != null) {
-            item.setDescription(itemDTO.getDescription());
+        if (editItem.getDescription() != null) {
+            item.setDescription(editItem.getDescription());
         }
-        if (itemDTO.getNoOfAvailableItems() != null) {
-            item.setNoOfAvailableItems(itemDTO.getNoOfAvailableItems());
+        if (editItem.getNoOfAvailableItems() != null) {
+            item.setNoOfAvailableItems(editItem.getNoOfAvailableItems());
         }
 
         Item updatedItem = itemRepository.save(item);
@@ -74,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDTO findItemByName(String name) {
-        Item item = itemRepository.findItemByName(name).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
+        Item item = itemRepository.findItemByNameIgnoreCase(name).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
 
         return objectMapper.convertValue(item, ItemDTO.class);
     }

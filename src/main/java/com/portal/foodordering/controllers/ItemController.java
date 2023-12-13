@@ -1,5 +1,6 @@
 package com.portal.foodordering.controllers;
 
+import com.portal.foodordering.models.dtos.EditItem;
 import com.portal.foodordering.models.dtos.ItemDTO;
 import com.portal.foodordering.serivces.interfaces.ItemService;
 import jakarta.validation.Valid;
@@ -30,8 +31,8 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ItemDTO> updateItem(@PathVariable Long id, @RequestBody ItemDTO itemDTO) {
-        return ResponseEntity.ok(itemService.updateItem(id, itemDTO));
+    public ResponseEntity<ItemDTO> updateItem(@PathVariable Long id, @RequestBody EditItem editItem) {
+        return ResponseEntity.ok(itemService.updateItem(id, editItem));
     }
 
     @DeleteMapping("/{id}")

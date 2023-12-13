@@ -141,7 +141,7 @@ class RestaurantUnitTest {
         Restaurant restaurant = createRestaurantEntity("Thalia", "Italian cuisine");
         RestaurantDTO restaurantDTO = createRestaurantDTO("Thalia", "Italian cuisine");
 
-        when(restaurantRepository.findByName(name)).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.findByNameIgnoreCase(name)).thenReturn(Optional.of(restaurant));
         when(objectMapper.convertValue(restaurant, RestaurantDTO.class)).thenReturn(restaurantDTO);
 
         RestaurantDTO result = restaurantService.findRestaurantByName(name);
@@ -152,7 +152,7 @@ class RestaurantUnitTest {
     void findRestaurantByNameNotFound() {
         String name = "Thalia";
 
-        when(restaurantRepository.findByName(name)).thenReturn(Optional.empty());
+        when(restaurantRepository.findByNameIgnoreCase(name)).thenReturn(Optional.empty());
 
         assertThrows(RestaurantNotFoundException.class, () -> {
             restaurantService.findRestaurantByName(name);
@@ -165,7 +165,7 @@ class RestaurantUnitTest {
         Restaurant restaurant = createRestaurantEntity("Thalia", "Italian cuisine");
         RestaurantDTO restaurantDTO = createRestaurantDTO("Thalia", "Italian cuisine");
 
-        when(restaurantRepository.findByCuisine(cuisine)).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.findByCuisineIgnoreCase(cuisine)).thenReturn(Optional.of(restaurant));
         when(objectMapper.convertValue(restaurant, RestaurantDTO.class)).thenReturn(restaurantDTO);
 
         RestaurantDTO result = restaurantService.findRestaurantByCuisine(cuisine);
@@ -176,7 +176,7 @@ class RestaurantUnitTest {
     void findRestaurantByCuisineNotFound() {
         String cuisine = "Italian cuisine";
 
-        when(restaurantRepository.findByCuisine(cuisine)).thenReturn(Optional.empty());
+        when(restaurantRepository.findByCuisineIgnoreCase(cuisine)).thenReturn(Optional.empty());
 
         assertThrows(RestaurantNotFoundException.class, () -> {
             restaurantService.findRestaurantByCuisine(cuisine);

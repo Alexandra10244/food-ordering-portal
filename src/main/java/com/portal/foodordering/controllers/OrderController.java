@@ -1,8 +1,11 @@
 package com.portal.foodordering.controllers;
 
+import com.portal.foodordering.exceptions.ItemNotFoundException;
+import com.portal.foodordering.exceptions.OrderNotFoundException;
 import com.portal.foodordering.models.dtos.OrderDTO;
 import com.portal.foodordering.serivces.interfaces.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +20,11 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping("/{itemId}/{quantity}")
-    public ResponseEntity<OrderDTO> createOrder(@Validated @RequestBody OrderDTO orderDTO,
+    @PostMapping("/{userId}/{itemId}")
+    public ResponseEntity<OrderDTO> createOrder(@PathVariable Long userId,
                                                 @PathVariable Long itemId,
-                                                @PathVariable int quantity) {
-        return ResponseEntity.ok(orderService.createOrder(orderDTO, itemId, quantity));
+                                                @RequestParam int quantity) {
+        return ResponseEntity.ok(orderService.createOrder(userId, itemId, quantity));
     }
 
     @GetMapping
@@ -34,25 +37,26 @@ public class OrderController {
         return ResponseEntity.ok(orderService.deleteOrder(id));
     }
 
-    @GetMapping("/order_by_id")
+    @GetMapping("/by-id")
     public ResponseEntity<OrderDTO> findOrderById(@RequestParam Long id) {
         return ResponseEntity.ok(orderService.findById(id));
     }
 
-    @GetMapping("/order_by_user")
-    public ResponseEntity<OrderDTO> findOrderByUser(@RequestParam Long userId) {
-        return ResponseEntity.ok(orderService.findById(userId));
+    @GetMapping("/by-user")
+    public ResponseEntity<List<OrderDTO>>findOrderByUser(@RequestParam Long userId) {
+        return ResponseEntity.ok(orderService.findOrderByUserId(userId));
     }
 
     @PatchMapping
-    public ResponseEntity<OrderDTO> addItemsToOrder(@PathVariable Long orderId,
-                                                    @PathVariable Long itemId) {
+    public ResponseEntity<OrderDTO> addItemsToOrder(@RequestParam Long orderId,
+                                                    @RequestParam Long itemId) {
+        orderService.addItemToOrder(orderId,itemId);
         return ResponseEntity.ok(orderService.addItemToOrder(orderId, itemId));
     }
 
     @DeleteMapping("/{order_id}/{item_id}")
-    public ResponseEntity<OrderDTO> removeItemFromOrder(@PathVariable Long orderId,
-                                                        @PathVariable Long itemId) {
+    public ResponseEntity<OrderDTO> removeItemFromOrder(@RequestParam Long orderId,
+                                                        @RequestParam Long itemId) {
         return ResponseEntity.ok(orderService.removeItemFromOrder(orderId, itemId));
     }
 
@@ -60,6 +64,12 @@ public class OrderController {
     public ResponseEntity<String> processPayment(@PathVariable Long id,
                                                  @RequestParam String option) {
         return ResponseEntity.ok(orderService.processPaymentConfirmation(id, option));
+    }
+
+    @PatchMapping("/{orderId}/order-item/{itemId}")
+    public ResponseEntity<OrderDTO> addItem(@PathVariable Long orderId,
+                                            @PathVariable Long itemId) {
+        return  ResponseEntity.ok(orderService.addItemToOrder(orderId,itemId));
     }
 }
 
