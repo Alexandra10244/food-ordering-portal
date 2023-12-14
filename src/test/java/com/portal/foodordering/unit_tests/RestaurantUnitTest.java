@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -160,15 +161,15 @@ class RestaurantUnitTest {
     }
 
     @Test
-    void findRestaurantByCisineSuccess() {
+    void findRestaurantByCuisineSuccess() {
         String cuisine = "Italian cuisine";
         Restaurant restaurant = createRestaurantEntity("Thalia", "Italian cuisine");
         RestaurantDTO restaurantDTO = createRestaurantDTO("Thalia", "Italian cuisine");
 
-        when(restaurantRepository.findByCuisineIgnoreCase(cuisine)).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.findByCuisineIgnoreCase(cuisine)).thenReturn(List.of(restaurant));
         when(objectMapper.convertValue(restaurant, RestaurantDTO.class)).thenReturn(restaurantDTO);
 
-        RestaurantDTO result = restaurantService.findRestaurantByCuisine(cuisine);
+        List<RestaurantDTO> result = restaurantService.findRestaurantByCuisine(cuisine);
         assertEquals(restaurantDTO, restaurantDTO);
     }
 
@@ -176,11 +177,9 @@ class RestaurantUnitTest {
     void findRestaurantByCuisineNotFound() {
         String cuisine = "Italian cuisine";
 
-        when(restaurantRepository.findByCuisineIgnoreCase(cuisine)).thenReturn(Optional.empty());
-
-        assertThrows(RestaurantNotFoundException.class, () -> {
-            restaurantService.findRestaurantByCuisine(cuisine);
-        });
+        when(restaurantRepository.findByCuisineIgnoreCase(cuisine)).thenReturn(new ArrayList<>());
+        List<RestaurantDTO> result = restaurantService.findRestaurantByCuisine(cuisine);
+        assertTrue(result.isEmpty());
     }
 
     RestaurantDTO createRestaurantDTO(String name, String cuisine) {

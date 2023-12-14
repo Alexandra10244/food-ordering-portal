@@ -96,7 +96,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     public List<RestaurantDTO> findRestaurantByCuisine(String cuisine) {
         List<Restaurant> restaurants = restaurantRepository
                 .findByCuisineIgnoreCase(cuisine);
-                //.orElseThrow(() -> new RestaurantNotFoundException("Restaurant with cuisine " + cuisine + " not fount!"));
 
         return restaurants.stream()
                 .map(restaurant-> objectMapper.convertValue(restaurant, RestaurantDTO.class))
